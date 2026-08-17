@@ -46,12 +46,13 @@ footer{text-align:center;color:#9aa58b;font-size:11px;margin-top:20px}
 </head>
 <body>
 <main class="app">
-<header><div class="logo">🌿</div><h1>Grocery Checklist</h1><p class="subtitle">A little matcha-organized shopping list ✦</p></header>
+<header><div class="logo">🌿</div><h1>Grocery Checklist</h1></header>
 
 <section class="add">
 <input id="input" type="text" placeholder="Add a grocery item..." autocomplete="off">
 <select id="category"></select>
 <button id="addBtn">+ Add</button>
+<button id="resetBtn" class="small" type="button">Reset</button>
 </section>
 
 <div class="toolbar">
@@ -71,7 +72,7 @@ const categories=[
 "Beverages","Health & Wellness","Cleaning & Laundry"
 ];
 const starter=[
-["Frozen & Refrigerated","Frozen pie crusts"],["Frozen & Refrigerated","Frozen burritos / chimichangas"],["Frozen & Refrigerated","Beef burgers (frozen patties)"],["Frozen & Refrigerated","Potato salad (ready-to-serve)"],
+["Frozen & Refrigerated","Frozen pie crusts"],["Frozen & Refrigerated","Beef burgers (frozen patties)"],["Frozen & Refrigerated","Potato [...]"],
 ["Pasta & Grains","Spaghetti / lasagna pasta"],["Pasta & Grains","Ramen / instant noodles"],["Pasta & Grains","Basmati rice"],
 ["Produce","Avocados"],["Produce","Roma tomatoes"],["Produce","Kiwi fruit"],["Produce","Carrots"],
 ["Dairy (additional)","Yogurt (Greek, whole milk)"],["Dairy (additional)","Butter"],["Dairy (additional)","Ricotta & mozzarella cheese"],["Dairy (additional)","Sour cream"],
@@ -89,6 +90,13 @@ categories.forEach(c=>cat.add(new Option(c,c)));
 
 let items=JSON.parse(localStorage.getItem(KEY)||"null");
 if(!items){items=starter.map(([category,name])=>({category,name,done:false}));save()}
+
+// Remove any existing burrito / chimichanga items from stored data (case-insensitive)
+(function removeBurritos(){
+  const before = items.length;
+  items = items.filter(i => !/burrito|chimichanga/i.test(i.name));
+  if(items.length !== before){ save(); }
+})();
 
 function save(){localStorage.setItem(KEY,JSON.stringify(items))}
 function render(){
@@ -113,12 +121,20 @@ function render(){
 }
 function add(){
  const name=input.value.trim();if(!name)return;
- items.push({name,category:cat.value,done:false});save();render();input.value="";input.focus();
+ const selected = cat.value;
+ const category = categories.includes(selected) ? selected : categories[0];
+ items.push({name,category,done:false});save();render();input.value="";input.focus();
 }
 document.getElementById("addBtn").onclick=add;
 input.addEventListener("keydown",e=>{if(e.key==="Enter")add()});
 document.getElementById("clearChecked").onclick=()=>{items=items.filter(x=>!x.done);save();render()};
 document.getElementById("clearAll").onclick=()=>{if(items.length&&confirm("Clear your entire grocery list?")){items=[];save();render()}};
+// Reset button: restore starter items
+document.getElementById("resetBtn").onclick = () => {
+  if(!confirm('Reset the list to the starter items? This will replace your current list.')) return;
+  items = starter.map(([category,name]) => ({category,name,done:false}));
+  save(); render();
+};
 if("serviceWorker" in navigator) addEventListener("load",()=>navigator.serviceWorker.register("service-worker.js"));
 render();
 </script>
