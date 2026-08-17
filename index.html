@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#8aaa5b">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Grocery List">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>Grocery Checklist</title>
+<style>
+:root{
+  --matcha:#8aaa5b; --dark:#4f6733; --soft:#edf4df; --cream:#fbfcf5;
+  --bg:#f3f7e9; --text:#30392a; --muted:#7d876f; --line:#dbe5ca;
+}
+*{box-sizing:border-box}
+body{margin:0;background:linear-gradient(180deg,#edf4df,#f8faf2 45%,#fff);
+font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;color:var(--text);min-height:100vh}
+.app{max-width:760px;margin:auto;padding:max(22px,env(safe-area-inset-top)) 16px calc(30px + env(safe-area-inset-bottom))}
+header{text-align:center;padding:12px 5px 20px}
+.logo{font-size:42px} h1{margin:2px 0 4px;font-size:30px;letter-spacing:-.7px;color:var(--dark)}
+.subtitle{margin:0;color:var(--muted);font-size:14px}
+.add{display:flex;gap:8px;background:#fff;padding:9px;border:1px solid var(--line);border-radius:18px;box-shadow:0 7px 25px #526b3212}
+input[type=text]{flex:1;min-width:0;border:0;outline:0;background:var(--cream);border-radius:12px;padding:13px;font-size:16px;color:var(--text)}
+select{border:1px solid var(--line);background:var(--cream);border-radius:12px;padding:0 10px;color:var(--dark);font-size:14px}
+button{font:inherit;cursor:pointer;border:0}
+#addBtn{background:var(--matcha);color:white;border-radius:12px;padding:0 18px;font-weight:700}
+.toolbar{display:flex;justify-content:space-between;align-items:center;margin:15px 2px 10px;gap:8px}
+#count{font-size:13px;color:var(--muted)}
+.actions{display:flex;gap:6px}
+.small{background:#fff;border:1px solid var(--line);color:var(--dark);border-radius:10px;padding:7px 9px;font-size:12px;font-weight:600}
+.category{margin:16px 0 8px;color:var(--dark);font-weight:800;font-size:15px;display:flex;align-items:center;gap:7px}
+.item{display:flex;align-items:center;gap:11px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:11px 10px;margin-bottom:7px}
+.check{appearance:none;width:23px;height:23px;flex:0 0 23px;border:2px solid #b7c59e;border-radius:7px;background:white;position:relative}
+.check:checked{background:var(--matcha);border-color:var(--matcha)}
+.check:checked:after{content:"✓";position:absolute;color:#fff;font-weight:800;left:3px;top:-2px}
+.name{flex:1;overflow-wrap:anywhere;font-size:15px}
+.done .name{text-decoration:line-through;color:#a3aa99}
+.delete{width:32px;height:32px;border-radius:9px;background:#f5f8ed;color:#74864f;font-size:18px}
+.empty{text-align:center;padding:42px 15px;color:var(--muted);background:#ffffffb8;border:1px dashed var(--line);border-radius:16px}
+footer{text-align:center;color:#9aa58b;font-size:11px;margin-top:20px}
+@media(max-width:560px){.add{flex-wrap:wrap}.add input{width:100%;flex-basis:100%}.add select{height:43px;flex:1}.add #addBtn{height:43px}}
+</style>
+</head>
+<body>
+<main class="app">
+<header><div class="logo">🌿</div><h1>Grocery Checklist</h1><p class="subtitle">A little matcha-organized shopping list ✦</p></header>
+
+<section class="add">
+<input id="input" type="text" placeholder="Add a grocery item..." autocomplete="off">
+<select id="category"></select>
+<button id="addBtn">+ Add</button>
+</section>
+
+<div class="toolbar">
+<span id="count"></span>
+<div class="actions"><button class="small" id="clearChecked">Clear checked</button><button class="small" id="clearAll">Clear all</button></div>
+</div>
+
+<section id="list"></section>
+<footer>Saved automatically • Works offline • Your list stays on this device</footer>
+</main>
+
+<script>
+const KEY="matcha-grocery-list-v1";
+const categories=[
+"Frozen & Refrigerated","Pasta & Grains","Produce","Dairy (additional)",
+"Personal Care (additional)","Bakery","Proteins","Condiments & Sauces",
+"Beverages","Health & Wellness","Cleaning & Laundry"
+];
+const starter=[
+["Frozen & Refrigerated","Frozen pie crusts"],["Frozen & Refrigerated","Frozen burritos / chimichangas"],["Frozen & Refrigerated","Beef burgers (frozen patties)"],["Frozen & Refrigerated","Potato salad (ready-to-serve)"],
+["Pasta & Grains","Spaghetti / lasagna pasta"],["Pasta & Grains","Ramen / instant noodles"],["Pasta & Grains","Basmati rice"],
+["Produce","Avocados"],["Produce","Roma tomatoes"],["Produce","Kiwi fruit"],["Produce","Carrots"],
+["Dairy (additional)","Yogurt (Greek, whole milk)"],["Dairy (additional)","Butter"],["Dairy (additional)","Ricotta & mozzarella cheese"],["Dairy (additional)","Sour cream"],
+["Personal Care (additional)","Bar soap"],["Personal Care (additional)","Deodorant"],["Personal Care (additional)","Shampoo"],["Personal Care (additional)","Pore strips / acne patches"],
+["Bakery","Bread loaf"],["Bakery","Burger buns"],["Bakery","Muffins"],
+["Proteins","Sausage / hot links"],["Proteins","Bacon"],["Proteins","Canned tuna / trout"],
+["Condiments & Sauces","Ketchup"],["Condiments & Sauces","Mayonnaise"],["Condiments & Sauces","Salsa"],["Condiments & Sauces","Soy sauce"],
+["Beverages","Apple juice"],["Beverages","Coconut water"],["Beverages","Coffee (ground)"],
+["Health & Wellness","Protein shakes"],["Health & Wellness","Granola"],["Health & Wellness","Flax seed"],["Health & Wellness","Sweetener (zero calorie)"],
+["Cleaning & Laundry","Laundry detergent"],["Cleaning & Laundry","Dish soap"]
+];
+
+const input=document.getElementById("input"), cat=document.getElementById("category"), list=document.getElementById("list"), count=document.getElementById("count");
+categories.forEach(c=>cat.add(new Option(c,c)));
+
+let items=JSON.parse(localStorage.getItem(KEY)||"null");
+if(!items){items=starter.map(([category,name])=>({category,name,done:false}));save()}
+
+function save(){localStorage.setItem(KEY,JSON.stringify(items))}
+function render(){
+ list.innerHTML="";
+ if(!items.length){list.innerHTML='<div class="empty"><b>Your grocery list is empty 🌿</b><br>Add something above to get started.</div>'}
+ categories.forEach(category=>{
+   const group=items.filter(x=>x.category===category);
+   if(!group.length)return;
+   const title=document.createElement("div");title.className="category";title.textContent=category;list.appendChild(title);
+   group.forEach(item=>{
+     const i=items.indexOf(item), row=document.createElement("div");row.className="item"+(item.done?" done":"");
+     const check=document.createElement("input");check.type="checkbox";check.className="check";check.checked=item.done;
+     check.addEventListener("change",()=>{items[i].done=check.checked;save();render()});
+     const name=document.createElement("span");name.className="name";name.textContent=item.name;
+     const del=document.createElement("button");del.className="delete";del.textContent="×";del.setAttribute("aria-label","Delete "+item.name);
+     del.onclick=()=>{items.splice(i,1);save();render()};
+     row.append(check,name,del);list.appendChild(row);
+   });
+ });
+ const remaining=items.filter(x=>!x.done).length;
+ count.textContent=`${remaining} remaining • ${items.length} total`;
+}
+function add(){
+ const name=input.value.trim();if(!name)return;
+ items.push({name,category:cat.value,done:false});save();render();input.value="";input.focus();
+}
+document.getElementById("addBtn").onclick=add;
+input.addEventListener("keydown",e=>{if(e.key==="Enter")add()});
+document.getElementById("clearChecked").onclick=()=>{items=items.filter(x=>!x.done);save();render()};
+document.getElementById("clearAll").onclick=()=>{if(items.length&&confirm("Clear your entire grocery list?")){items=[];save();render()}};
+if("serviceWorker" in navigator) addEventListener("load",()=>navigator.serviceWorker.register("service-worker.js"));
+render();
+</script>
+</body>
+</html>
