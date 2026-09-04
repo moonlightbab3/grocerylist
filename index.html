@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-title" content="Grocery List">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
-<title>Grocery Checklist</title>
+<title>Grocery Checklist — Today</title>
 <style>
 :root{
   --matcha:#8aaa5b; --dark:#4f6733; --soft:#edf4df; --cream:#fbfcf5;
@@ -19,7 +19,7 @@
 body{margin:0;background:linear-gradient(180deg,#edf4df,#f8faf2 45%,#fff);
 font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;color:var(--text);min-height:100vh}
 .app{max-width:760px;margin:auto;padding:max(22px,env(safe-area-inset-top)) 16px calc(30px + env(safe-area-inset-bottom))}
-header{text-align:center;padding:12px 5px 20px}
+header{text-align:center;padding:12px 5px 8px}
 .logo{font-size:42px} h1{margin:2px 0 4px;font-size:30px;letter-spacing:-.7px;color:var(--dark)}
 .subtitle{margin:0;color:var(--muted);font-size:14px}
 .add{display:flex;gap:8px;background:#fff;padding:9px;border:1px solid var(--line);border-radius:18px;box-shadow:0 7px 25px #526b3212}
@@ -46,13 +46,13 @@ footer{text-align:center;color:#9aa58b;font-size:11px;margin-top:20px}
 </head>
 <body>
 <main class="app">
-<header><div class="logo">🌿</div><h1>Grocery Checklist</h1></header>
+<header><div class="logo">🌿</div><h1>Grocery Checklist</h1><div class="subtitle" id="dateSubtitle"></div></header>
 
 <section class="add">
-<input id="input" type="text" placeholder="Add a grocery item..." autocomplete="off">
+<input id="input" type="text" placeholder="Add a grocery item for today..." autocomplete="off">
 <select id="category"></select>
 <button id="addBtn">+ Add</button>
-<button id="resetBtn" class="small" type="button">Reset</button>
+<button id="resetBtn" class="small" type="button">Load starter items</button>
 </section>
 
 <div class="toolbar">
@@ -65,90 +65,85 @@ footer{text-align:center;color:#9aa58b;font-size:11px;margin-top:20px}
 </main>
 
 <script>
-const KEY="matcha-grocery-list-v1";
+// Store lists per-day so you can have a different list for each date.
+function dateKeyFor(d){
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth()+1).padStart(2,'0');
+  const dd = String(d.getDate()).padStart(2,'0');
+  return `${yyyy}-${mm}-${dd}`;
+}
+const today = new Date();
+const DATE_KEY = dateKeyFor(today);
+const KEY = `matcha-grocery-list-v1-${DATE_KEY}`;
+
+// show date in header
+document.addEventListener('DOMContentLoaded', () => {
+  const ds = document.getElementById('dateSubtitle');
+  ds.textContent = `For: ${DATE_KEY}`;
+});
+
 const categories=[
 "Frozen & Refrigerated","Pasta & Grains","Produce","Dairy (additional)",
 "Personal Care (additional)","Bakery","Proteins","Cats","Condiments & Sauces",
 "Beverages","Health & Wellness","Cleaning & Laundry"
 ];
 const starter=[
-// Frozen & Refrigerated
-["Frozen & Refrigerated","Frozen pie crusts"],["Frozen & Refrigerated","Frozen blueberries"],["Frozen & Refrigerated","Frozen pie"],["Frozen & Refrigerated","Frozen pizza"],["Frozen & Refrigerated","Biscuits"],["Frozen & Refrigerated","Beef burgers (frozen patties)"],
-// Pasta & Grains
-["Pasta & Grains","Spaghetti / lasagna pasta"],["Pasta & Grains","Ramen / instant noodles"],["Pasta & Grains","Basmati rice"],["Pasta & Grains","Jasmine rice"],
-// Produce
-["Produce","Avocados"],["Produce","Roma tomatoes"],["Produce","Kiwi fruit"],["Produce","Carrots"],["Produce","Bananas"],["Produce","Lemons"],
-// Dairy
-["Dairy (additional)","Yogurt (Greek, whole milk)"],["Dairy (additional)","Butter"],["Dairy (additional)","Ricotta & mozzarella cheese"],["Dairy (additional)","Sour cream"],["Dairy (additional)","Creamer"],["Dairy (additional)","Whipped cream"],["Dairy (additional)","Milk"],
-// Personal Care
-["Personal Care (additional)","Bar soap"],["Personal Care (additional)","Deodorant"],["Personal Care (additional)","Shampoo"],["Personal Care (additional)","Pore strips / acne patches"],
-// Bakery
-["Bakery","Bread loaf"],["Bakery","Burger buns"],["Bakery","Muffins"],["Bakery","Hotdog buns"],
-// Proteins
-["Proteins","Sausage / hot links"],["Proteins","Bacon"],["Proteins","Canned tuna"],["Proteins","Spam"],["Proteins","Ground beef"],
-// Cats
-["Cats","Wet cat food (pate variety)"],["Cats","Dry cat food"],["Cats","Cat litter (non-clumping, 25 lb)"],["Cats","Cat treats"],
-// Condiments & Sauces
-["Condiments & Sauces","Ketchup"],["Condiments & Sauces","Mayonnaise"],["Condiments & Sauces","Salsa"],["Condiments & Sauces","Soy sauce"],["Condiments & Sauces","Sweet relish"],["Condiments & Sauces","Pickles"],
-// Beverages
-["Beverages","Apple juice"],["Beverages","Coconut water"],["Beverages","Coffee (ground)"],["Beverages","Wine"],
-// Health & Wellness
-["Health & Wellness","Protein shakes"],["Health & Wellness","Granola"],["Health & Wellness","Flax seed"],["Health & Wellness","Sweetener (zero calorie)"],["Health & Wellness","Hemp seed"],["Health & Wellness","Energy bars"],["Health & Wellness","Vitamins"],
-// Cleaning & Laundry
-["Cleaning & Laundry","Laundry detergent"],["Cleaning & Laundry","Dish soap"],["Cleaning & Laundry","Hydrogen peroxide"],["Cleaning & Laundry","Alcohol"],["Cleaning & Laundry","Baking soda"]
+["Produce","Bananas"],["Produce","Carrots"],["Dairy (additional)","Milk"],["Bakery","Bread loaf"],["Proteins","Ground beef"]
 ];
 
 const input=document.getElementById("input"), cat=document.getElementById("category"), list=document.getElementById("list"), count=document.getElementById("count");
 categories.forEach(c=>cat.add(new Option(c,c)));
 
-let items=JSON.parse(localStorage.getItem(KEY)||"null");
-if(!items){items=starter.map(([category,name])=>({category,name,done:false}));save()}
+let items;
+try{ items = JSON.parse(localStorage.getItem(KEY)||"null"); } catch(e){ items = null; }
+if(!Array.isArray(items)){
+  // start with an empty list for each day (user can load starter items)
+  items = [];
+  save();
+}
 
-// Remove any existing burrito / chimichanga items from stored data (case-insensitive)
-(function removeBurritos(){
-  const before = items.length;
-  items = items.filter(i => !/burrito|chimichanga/i.test(i.name));
-  if(items.length !== before){ save(); }
-})();
-
-function save(){localStorage.setItem(KEY,JSON.stringify(items))}
+function save(){localStorage.setItem(KEY,JSON.stringify(items));}
 function render(){
- list.innerHTML="";
- if(!items.length){list.innerHTML='<div class="empty"><b>Your grocery list is empty 🌿</b><br>Add something above to get started.</div>'}
+ list.innerHTML = "";
+ if(!items.length){list.innerHTML='<div class="empty"><b>Your grocery list for today is empty 🌿</b><br>Add something above to get started.</div>'}
  categories.forEach(category=>{
-   const group=items.filter(x=>x.category===category);
-   if(!group.length)return;
-   const title=document.createElement("div");title.className="category";title.textContent=category;list.appendChild(title);
+   const group = items.filter(x=>x.category===category);
+   if(!group.length) return;
+   const title = document.createElement('div'); title.className='category'; title.textContent=category; list.appendChild(title);
    group.forEach(item=>{
-     const i=items.indexOf(item), row=document.createElement("div");row.className="item"+(item.done?" done":"");
-     const check=document.createElement("input");check.type="checkbox";check.className="check";check.checked=item.done;
-     check.addEventListener("change",()=>{items[i].done=check.checked;save();render()});
-     const name=document.createElement("span");name.className="name";name.textContent=item.name;
-     const del=document.createElement("button");del.className="delete";del.textContent="×";del.setAttribute("aria-label","Delete "+item.name);
-     del.onclick=()=>{items.splice(i,1);save();render()};
-     row.append(check,name,del);list.appendChild(row);
+     const i = items.indexOf(item), row = document.createElement('div'); row.className = 'item' + (item.done ? ' done' : '');
+     const check = document.createElement('input'); check.type='checkbox'; check.className='check'; check.checked=item.done;
+     check.addEventListener('change', ()=>{ items[i].done = check.checked; save(); render(); });
+     const name = document.createElement('span'); name.className='name'; name.textContent = item.name;
+     // toggle on name click too
+     name.addEventListener('click', ()=>{ items[i].done = !items[i].done; save(); render(); });
+     const del = document.createElement('button'); del.className='delete'; del.textContent='×'; del.setAttribute('aria-label','Delete '+item.name);
+     del.onclick = ()=>{ items.splice(i,1); save(); render(); };
+     row.append(check, name, del); list.appendChild(row);
    });
  });
- const remaining=items.filter(x=>!x.done).length;
- count.textContent=`${remaining} remaining • ${items.length} total`;
+ const remaining = items.filter(x=>!x.done).length;
+ count.textContent = `${remaining} remaining • ${items.length} total`;
 }
 function add(){
- const name=input.value.trim();if(!name)return;
- const selected = cat.value;
- const category = categories.includes(selected) ? selected : categories[0];
- items.push({name,category,done:false});save();render();input.value="";input.focus();
+ const name = input.value.trim(); if(!name) return;
+ const selected = cat.value; const category = categories.includes(selected) ? selected : categories[0];
+ items.push({name,category,done:false}); save(); render(); input.value=''; input.focus();
 }
+
 document.getElementById("addBtn").onclick=add;
-input.addEventListener("keydown",e=>{if(e.key==="Enter")add()});
-document.getElementById("clearChecked").onclick=()=>{items=items.filter(x=>!x.done);save();render()};
-document.getElementById("clearAll").onclick=()=>{if(items.length&&confirm("Clear your entire grocery list?")){items=[];save();render()}};
-// Reset button: restore starter items
+input.addEventListener('keydown', e=>{ if(e.key === 'Enter') add(); });
+document.getElementById("clearChecked").onclick = ()=>{ items = items.filter(x=>!x.done); save(); render(); };
+document.getElementById("clearAll").onclick = ()=>{ if(items.length && confirm('Clear your entire grocery list for today?')){ items=[]; save(); render(); } };
+
+// Load starter items for today (replaces current list)
 document.getElementById("resetBtn").onclick = () => {
-  if(!confirm('Reset the list to the starter items? This will replace your current list.')) return;
+  if(!confirm('Load starter items for today? This will replace your current list for today.')) return;
   items = starter.map(([category,name]) => ({category,name,done:false}));
   save(); render();
 };
-if("serviceWorker" in navigator) addEventListener("load",()=>navigator.serviceWorker.register("service-worker.js"));
+
+if("serviceWorker" in navigator) addEventListener("load", ()=> navigator.serviceWorker.register("service-worker.js"));
 render();
 </script>
 </body>
