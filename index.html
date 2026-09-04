@@ -3,12 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
 <meta name="theme-color" content="#8aaa5b">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Grocery List">
+
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
+
 <title>Grocery Checklist</title>
 
 <style>
@@ -17,7 +20,6 @@
   --dark:#4f6733;
   --soft:#edf4df;
   --cream:#fbfcf5;
-  --bg:#f3f7e9;
   --text:#30392a;
   --muted:#7d876f;
   --line:#dbe5ca;
@@ -29,8 +31,18 @@
 
 body{
   margin:0;
-  background:linear-gradient(180deg,#edf4df,#f8faf2 45%,#fff);
-  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;
+  background:linear-gradient(
+    180deg,
+    #edf4df,
+    #f8faf2 45%,
+    #fff
+  );
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "SF Pro Display",
+    "Segoe UI",
+    sans-serif;
   color:var(--text);
   min-height:100vh;
 }
@@ -38,10 +50,13 @@ body{
 .app{
   max-width:760px;
   margin:auto;
-  padding:max(22px,env(safe-area-inset-top))
-          16px
-          calc(30px + env(safe-area-inset-bottom));
+  padding:
+    max(22px,env(safe-area-inset-top))
+    16px
+    calc(30px + env(safe-area-inset-bottom));
 }
+
+/* HEADER */
 
 header{
   text-align:center;
@@ -65,22 +80,23 @@ h1{
   font-size:14px;
 }
 
-/* Tabs */
+/* TABS */
 
 .tabs{
   display:flex;
-  gap:7px;
-  background:#ffffffb8;
+  gap:6px;
+  background:#ffffffc9;
   border:1px solid var(--line);
   padding:5px;
-  border-radius:15px;
-  margin:12px 0 15px;
+  border-radius:16px;
+  margin:14px 0;
 }
 
 .tab{
   flex:1;
-  padding:11px 8px;
+  border:0;
   border-radius:11px;
+  padding:11px 8px;
   background:transparent;
   color:var(--muted);
   font-weight:700;
@@ -92,7 +108,7 @@ h1{
   color:white;
 }
 
-/* Add area */
+/* ADD BAR */
 
 .add{
   display:flex;
@@ -139,7 +155,7 @@ button{
   font-weight:700;
 }
 
-/* Toolbar */
+/* TOOLBAR */
 
 .toolbar{
   display:flex;
@@ -157,7 +173,6 @@ button{
 .actions{
   display:flex;
   gap:6px;
-  flex-wrap:wrap;
 }
 
 .small{
@@ -170,7 +185,26 @@ button{
   font-weight:600;
 }
 
-/* List */
+/* TODAY HEADER */
+
+.today-banner{
+  background:var(--soft);
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:11px 13px;
+  margin-bottom:14px;
+  text-align:center;
+  color:var(--dark);
+  font-size:13px;
+}
+
+.today-banner strong{
+  display:block;
+  font-size:16px;
+  margin-bottom:2px;
+}
+
+/* CATEGORIES */
 
 .category{
   margin:16px 0 8px;
@@ -181,6 +215,8 @@ button{
   align-items:center;
   gap:7px;
 }
+
+/* ITEMS */
 
 .item{
   display:flex;
@@ -229,23 +265,34 @@ button{
   color:#a3aa99;
 }
 
-.delete{
+/* BUTTONS */
+
+.delete,
+.copy{
   width:32px;
   height:32px;
   border-radius:9px;
+  flex:0 0 32px;
+}
+
+.delete{
   background:#f5f8ed;
   color:#74864f;
   font-size:18px;
 }
 
 .copy{
-  width:32px;
-  height:32px;
-  border-radius:9px;
   background:#edf4df;
   color:var(--dark);
-  font-size:16px;
+  font-size:18px;
+  font-weight:700;
 }
+
+.copy:hover{
+  background:#dfeacb;
+}
+
+/* EMPTY */
 
 .empty{
   text-align:center;
@@ -256,16 +303,7 @@ button{
   border-radius:16px;
 }
 
-.today-note{
-  text-align:center;
-  background:#edf4df;
-  border:1px solid var(--line);
-  color:var(--dark);
-  padding:10px;
-  border-radius:12px;
-  font-size:13px;
-  margin-bottom:12px;
-}
+/* FOOTER */
 
 footer{
   text-align:center;
@@ -273,6 +311,8 @@ footer{
   font-size:11px;
   margin-top:20px;
 }
+
+/* MOBILE */
 
 @media(max-width:560px){
 
@@ -302,6 +342,10 @@ footer{
   .actions{
     width:100%;
   }
+
+  .small{
+    flex:1;
+  }
 }
 </style>
 </head>
@@ -312,23 +356,33 @@ footer{
 
 <header>
   <div class="logo">🌿</div>
+
   <h1>Grocery Checklist</h1>
+
   <div class="subtitle" id="dateSubtitle"></div>
 </header>
 
-<!-- LIST TABS -->
+
+<!-- LIST SWITCHER -->
 
 <div class="tabs">
 
-  <button class="tab active" id="masterTab">
+  <button
+    class="tab active"
+    id="masterTab"
+    type="button">
     🛒 Master List
   </button>
 
-  <button class="tab" id="todayTab">
+  <button
+    class="tab"
+    id="todayTab"
+    type="button">
     🌿 Today
   </button>
 
 </div>
+
 
 <!-- ADD ITEM -->
 
@@ -338,16 +392,18 @@ footer{
     id="input"
     type="text"
     placeholder="Add a grocery item..."
-    autocomplete="off"
-  >
+    autocomplete="off">
 
   <select id="category"></select>
 
-  <button id="addBtn">
+  <button
+    id="addBtn"
+    type="button">
     + Add
   </button>
 
 </section>
+
 
 <!-- TOOLBAR -->
 
@@ -357,24 +413,32 @@ footer{
 
   <div class="actions">
 
-    <button class="small" id="clearChecked">
+    <button
+      class="small"
+      id="clearChecked"
+      type="button">
       Clear checked
     </button>
 
-    <button class="small" id="clearAll">
-      Clear all
+    <button
+      class="small"
+      id="clearAll"
+      type="button">
+      Reset list
     </button>
 
   </div>
 
 </div>
 
+
 <!-- LIST -->
 
 <section id="list"></section>
 
+
 <footer>
-  Master list stays permanent • Today is saved separately by date • Works offline
+  Saved automatically • Works offline • Your lists stay on this device
 </footer>
 
 </main>
@@ -382,17 +446,21 @@ footer{
 
 <script>
 
-/* =========================
+/* =========================================
    DATE
-========================= */
+========================================= */
 
-function dateKeyFor(d){
+function dateKeyFor(date){
 
-  const yyyy = d.getFullYear();
+  const yyyy = date.getFullYear();
 
-  const mm = String(d.getMonth()+1).padStart(2,'0');
+  const mm =
+    String(date.getMonth() + 1)
+      .padStart(2,"0");
 
-  const dd = String(d.getDate()).padStart(2,'0');
+  const dd =
+    String(date.getDate())
+      .padStart(2,"0");
 
   return `${yyyy}-${mm}-${dd}`;
 
@@ -403,21 +471,43 @@ const today = new Date();
 const DATE_KEY = dateKeyFor(today);
 
 
-/* =========================
+/* =========================================
    STORAGE KEYS
-========================= */
+========================================= */
 
-const MASTER_KEY = "matcha-grocery-master-v1";
+const MASTER_KEY =
+  "matcha-grocery-master-v2";
 
 const TODAY_KEY =
-  `matcha-grocery-today-v1-${DATE_KEY}`;
+  `matcha-grocery-today-v2-${DATE_KEY}`;
 
 
-/* =========================
+/*
+  OLD KEY FROM YOUR ORIGINAL APP.
+
+  This lets the new version recover
+  your previous list if it still exists.
+*/
+
+const OLD_KEY =
+  `matcha-grocery-list-v1-${DATE_KEY}`;
+
+
+/* =========================================
    CATEGORIES
-========================= */
+========================================= */
 
 const categories = [
+
+  "Cat & Pet",
+
+  "Household",
+
+  "Pantry",
+
+  "Dairy & Refrigerated",
+
+  "Personal Care",
 
   "Frozen & Refrigerated",
 
@@ -433,8 +523,6 @@ const categories = [
 
   "Proteins",
 
-  "Cats",
-
   "Condiments & Sauces",
 
   "Beverages",
@@ -446,33 +534,97 @@ const categories = [
 ];
 
 
-/* =========================
-   STARTER MASTER LIST
-========================= */
+/* =========================================
+   YOUR PERMANENT MASTER LIST
+========================================= */
 
-const starter = [
+const originalMaster = [
 
-  ["Produce","Bananas"],
+  ["Cat & Pet","Wet cat food (pate variety)"],
+  ["Cat & Pet","Dry cat food"],
+  ["Cat & Pet","Cat litter (non-clumping, 25 lb)"],
+  ["Cat & Pet","Cat treats"],
 
+  ["Household","Paper towels"],
+  ["Household","Paper plates"],
+  ["Household","Nasal spray decongestant"],
+  ["Household","Hydrogen peroxide"],
+
+  ["Pantry","Pasta sauce"],
+  ["Pantry","Ground beef (organic, grass-fed)"],
+  ["Pantry","Frozen blueberries"],
+  ["Pantry","Flour tortillas"],
+  ["Pantry","Taco seasoning"],
+  ["Pantry","Hemp hearts"],
+  ["Pantry","Bolillo rolls"],
+
+  ["Dairy & Refrigerated","Whole milk"],
+  ["Dairy & Refrigerated","Eggs"],
+  ["Dairy & Refrigerated","Orange juice"],
+
+  ["Personal Care","Cotton swabs"],
+  ["Personal Care","Dental floss"],
+
+  ["Frozen & Refrigerated","Frozen pie crusts"],
+  ["Frozen & Refrigerated","Frozen burritos / chimichangas"],
+  ["Frozen & Refrigerated","Beef burgers (frozen patties)"],
+  ["Frozen & Refrigerated","Potato salad (ready-to-serve)"],
+
+  ["Pasta & Grains","Spaghetti / lasagna pasta"],
+  ["Pasta & Grains","Ramen / instant noodles"],
+  ["Pasta & Grains","Basmati rice"],
+
+  ["Produce","Avocados"],
+  ["Produce","Roma tomatoes"],
+  ["Produce","Kiwi fruit"],
   ["Produce","Carrots"],
 
-  ["Dairy (additional)","Milk"],
+  ["Dairy (additional)","Yogurt (Greek, whole milk)"],
+  ["Dairy (additional)","Butter"],
+  ["Dairy (additional)","Ricotta & mozzarella cheese"],
+  ["Dairy (additional)","Sour cream"],
+
+  ["Personal Care (additional)","Bar soap"],
+  ["Personal Care (additional)","Deodorant"],
+  ["Personal Care (additional)","Shampoo"],
+  ["Personal Care (additional)","Pore strips / acne patches"],
 
   ["Bakery","Bread loaf"],
+  ["Bakery","Burger buns"],
+  ["Bakery","Muffins"],
 
-  ["Proteins","Ground beef"]
+  ["Proteins","Sausage / hot links"],
+  ["Proteins","Bacon"],
+  ["Proteins","Canned tuna / trout"],
+
+  ["Condiments & Sauces","Ketchup"],
+  ["Condiments & Sauces","Mayonnaise"],
+  ["Condiments & Sauces","Salsa"],
+  ["Condiments & Sauces","Soy sauce"],
+
+  ["Beverages","Apple juice"],
+  ["Beverages","Coconut water"],
+  ["Beverages","Coffee (ground)"],
+
+  ["Health & Wellness","Protein shakes"],
+  ["Health & Wellness","Granola"],
+  ["Health & Wellness","Flax seed"],
+  ["Health & Wellness","Sweetener (zero calorie)"],
+
+  ["Cleaning & Laundry","Laundry detergent"],
+  ["Cleaning & Laundry","Dish soap"]
 
 ];
 
 
-/* =========================
+/* =========================================
    DOM
-========================= */
+========================================= */
 
 const input =
   document.getElementById("input");
 
-const cat =
+const category =
   document.getElementById("category");
 
 const list =
@@ -491,79 +643,127 @@ const dateSubtitle =
   document.getElementById("dateSubtitle");
 
 
-/* =========================
+/* =========================================
    CATEGORY DROPDOWN
-========================= */
+========================================= */
 
-categories.forEach(c => {
+categories.forEach(catName => {
 
-  cat.add(new Option(c,c));
+  category.add(
+    new Option(catName,catName)
+  );
 
 });
 
 
-/* =========================
-   LOAD MASTER LIST
-========================= */
+/* =========================================
+   SAFE LOAD
+========================================= */
 
-let masterItems;
+function loadJSON(key){
 
-try{
+  try{
 
-  masterItems =
-    JSON.parse(
-      localStorage.getItem(MASTER_KEY) || "null"
-    );
+    const saved =
+      localStorage.getItem(key);
 
-}catch(e){
+    if(!saved) return null;
 
-  masterItems = null;
+    const parsed =
+      JSON.parse(saved);
 
-}
+    return Array.isArray(parsed)
+      ? parsed
+      : null;
 
-if(!Array.isArray(masterItems)){
+  }catch(error){
 
-  masterItems = [];
+    return null;
 
-}
-
-
-/* =========================
-   LOAD TODAY LIST
-========================= */
-
-let todayItems;
-
-try{
-
-  todayItems =
-    JSON.parse(
-      localStorage.getItem(TODAY_KEY) || "null"
-    );
-
-}catch(e){
-
-  todayItems = null;
+  }
 
 }
 
-if(!Array.isArray(todayItems)){
+
+/* =========================================
+   MASTER LIST
+========================================= */
+
+let masterItems =
+  loadJSON(MASTER_KEY);
+
+
+/*
+  If the new Master List doesn't exist,
+  check the old version.
+
+  This prevents your previous list
+  from being lost.
+*/
+
+if(!masterItems){
+
+  const oldItems =
+    loadJSON(OLD_KEY);
+
+  if(oldItems){
+
+    masterItems =
+      oldItems.map(item => ({
+
+        name:item.name,
+
+        category:
+          categories.includes(item.category)
+            ? item.category
+            : "Household",
+
+        done:false
+
+      }));
+
+  }else{
+
+    masterItems =
+      originalMaster.map(([category,name]) => ({
+
+        category,
+
+        name,
+
+        done:false
+
+      }));
+
+  }
+
+}
+
+
+/* =========================================
+   TODAY LIST
+========================================= */
+
+let todayItems =
+  loadJSON(TODAY_KEY);
+
+if(!todayItems){
 
   todayItems = [];
 
 }
 
 
-/* =========================
+/* =========================================
    CURRENT LIST
-========================= */
+========================================= */
 
 let currentList = "master";
 
 
-/* =========================
+/* =========================================
    SAVE
-========================= */
+========================================= */
 
 function save(){
 
@@ -580,49 +780,24 @@ function save(){
 }
 
 
-/* =========================
-   GET CURRENT ITEMS
-========================= */
+/* =========================================
+   INITIAL SAVE
+========================================= */
 
-function getItems(){
-
-  return currentList === "master"
-    ? masterItems
-    : todayItems;
-
-}
+save();
 
 
-/* =========================
-   SET CURRENT ITEMS
-========================= */
-
-function setItems(newItems){
-
-  if(currentList === "master"){
-
-    masterItems = newItems;
-
-  }else{
-
-    todayItems = newItems;
-
-  }
-
-}
-
-
-/* =========================
-   DATE HEADER
-========================= */
+/* =========================================
+   HEADER DATE
+========================================= */
 
 dateSubtitle.textContent =
   `Today: ${DATE_KEY}`;
 
 
-/* =========================
+/* =========================================
    SWITCH LIST
-========================= */
+========================================= */
 
 function switchList(type){
 
@@ -635,7 +810,7 @@ function switchList(type){
     todayTab.classList.remove("active");
 
     input.placeholder =
-      "Add a grocery item to your master list...";
+      "Add a grocery item to your Master List...";
 
   }else{
 
@@ -661,31 +836,42 @@ todayTab.onclick = () =>
   switchList("today");
 
 
-/* =========================
+/* =========================================
    RENDER
-========================= */
+========================================= */
 
 function render(){
 
   list.innerHTML = "";
 
-  const items = getItems();
+  const items =
+    currentList === "master"
+      ? masterItems
+      : todayItems;
+
+
+  /* TODAY BANNER */
 
   if(currentList === "today"){
 
-    const note =
+    const banner =
       document.createElement("div");
 
-    note.className = "today-note";
+    banner.className =
+      "today-banner";
 
-    note.innerHTML =
-      `🌿 <b>Today's Grocery List</b><br>
-       This list is separate from your Master List.`;
+    banner.innerHTML = `
+      <strong>🌿 Today's Grocery List</strong>
+      ${DATE_KEY}<br>
+      Add items here, cross them off, or copy them from your Master List.
+    `;
 
-    list.appendChild(note);
+    list.appendChild(banner);
 
   }
 
+
+  /* EMPTY */
 
   if(!items.length){
 
@@ -696,15 +882,17 @@ function render(){
 
     if(currentList === "master"){
 
-      empty.innerHTML =
-        "<b>Your Master Grocery List is empty 🌿</b><br>" +
-        "Add your regular grocery items here.";
+      empty.innerHTML = `
+        <b>Your Master Grocery List is empty 🌿</b><br>
+        Add your regular grocery items above.
+      `;
 
     }else{
 
-      empty.innerHTML =
-        "<b>Nothing on today's list 🌿</b><br>" +
-        "Add something above or copy an item from your Master List.";
+      empty.innerHTML = `
+        <b>Today's list is empty 🌿</b><br>
+        Add items above or use ＋ from your Master List.
+      `;
 
     }
 
@@ -713,11 +901,14 @@ function render(){
   }
 
 
-  categories.forEach(category => {
+  /* CATEGORIES */
+
+  categories.forEach(categoryName => {
 
     const group =
       items.filter(
-        x => x.category === category
+        item =>
+          item.category === categoryName
       );
 
     if(!group.length) return;
@@ -726,16 +917,20 @@ function render(){
     const title =
       document.createElement("div");
 
-    title.className = "category";
+    title.className =
+      "category";
 
-    title.textContent = category;
+    title.textContent =
+      categoryName;
 
     list.appendChild(title);
 
 
+    /* ITEMS */
+
     group.forEach(item => {
 
-      const i =
+      const index =
         items.indexOf(item);
 
       const row =
@@ -751,17 +946,21 @@ function render(){
       const check =
         document.createElement("input");
 
-      check.type = "checkbox";
+      check.type =
+        "checkbox";
 
-      check.className = "check";
+      check.className =
+        "check";
 
-      check.checked = item.done;
+      check.checked =
+        item.done;
+
 
       check.addEventListener(
         "change",
         () => {
 
-          items[i].done =
+          item.done =
             check.checked;
 
           save();
@@ -777,17 +976,19 @@ function render(){
       const name =
         document.createElement("span");
 
-      name.className = "name";
+      name.className =
+        "name";
 
       name.textContent =
         item.name;
+
 
       name.addEventListener(
         "click",
         () => {
 
-          items[i].done =
-            !items[i].done;
+          item.done =
+            !item.done;
 
           save();
 
@@ -797,36 +998,47 @@ function render(){
       );
 
 
-      /* TODAY COPY BUTTON */
+      row.appendChild(check);
+
+      row.appendChild(name);
+
+
+      /* MASTER → TODAY BUTTON */
 
       if(currentList === "master"){
 
         const copy =
           document.createElement("button");
 
-        copy.className = "copy";
+        copy.className =
+          "copy";
 
-        copy.textContent = "＋";
+        copy.textContent =
+          "＋";
 
         copy.title =
           "Add to Today's List";
 
         copy.setAttribute(
           "aria-label",
-          "Add " + item.name + " to Today's List"
+          "Add " + item.name +
+          " to today's list"
         );
+
 
         copy.onclick = () => {
 
-          const alreadyThere =
+          const alreadyExists =
             todayItems.some(
-              x =>
-                x.name.toLowerCase() ===
+              todayItem =>
+                todayItem.name.toLowerCase() ===
                 item.name.toLowerCase() &&
-                x.category === item.category
+                todayItem.category ===
+                item.category
             );
 
-          if(alreadyThere){
+
+          if(alreadyExists){
 
             alert(
               `"${item.name}" is already on today's list.`
@@ -836,98 +1048,82 @@ function render(){
 
           }
 
+
           todayItems.push({
 
-            name: item.name,
+            name:item.name,
 
-            category: item.category,
+            category:item.category,
 
-            done: false
+            done:false
 
           });
 
+
           save();
 
-          alert(
-            `"${item.name}" was added to today's list 🌿`
+
+          copy.textContent = "✓";
+
+          setTimeout(
+            () => {
+              copy.textContent = "＋";
+            },
+            900
           );
 
         };
 
-        row.appendChild(check);
-
-        row.appendChild(name);
 
         row.appendChild(copy);
 
       }
 
 
-      /* TODAY DELETE */
+      /* DELETE */
 
-      if(currentList === "today"){
+      const deleteButton =
+        document.createElement("button");
 
-        const del =
-          document.createElement("button");
+      deleteButton.className =
+        "delete";
 
-        del.className = "delete";
+      deleteButton.textContent =
+        "×";
 
-        del.textContent = "×";
+      deleteButton.title =
+        "Delete item";
 
-        del.setAttribute(
-          "aria-label",
-          "Delete " + item.name
-        );
-
-        del.onclick = () => {
-
-          todayItems.splice(i,1);
-
-          save();
-
-          render();
-
-        };
-
-        row.appendChild(check);
-
-        row.appendChild(name);
-
-        row.appendChild(del);
-
-      }
+      deleteButton.setAttribute(
+        "aria-label",
+        "Delete " + item.name
+      );
 
 
-      /* MASTER DELETE */
+      deleteButton.onclick = () => {
 
-      if(currentList === "master"){
+        const message =
+          currentList === "master"
 
-        const del =
-          document.createElement("button");
+            ? `Delete "${item.name}" from your Master List?`
 
-        del.className = "delete";
+            : `Remove "${item.name}" from today's list?`;
 
-        del.textContent = "×";
 
-        del.setAttribute(
-          "aria-label",
-          "Delete " + item.name
-        );
+        if(!confirm(message))
+          return;
 
-        del.onclick = () => {
 
-          masterItems.splice(i,1);
+        items.splice(index,1);
 
-          save();
+        save();
 
-          render();
+        render();
 
-        };
+      };
 
-        row.appendChild(del);
 
-      }
-
+      row.appendChild(deleteButton);
 
       list.appendChild(row);
 
@@ -936,9 +1132,11 @@ function render(){
   });
 
 
+  /* COUNT */
+
   const remaining =
     items.filter(
-      x => !x.done
+      item => !item.done
     ).length;
 
   count.textContent =
@@ -947,11 +1145,11 @@ function render(){
 }
 
 
-/* =========================
+/* =========================================
    ADD ITEM
-========================= */
+========================================= */
 
-function add(){
+function addItem(){
 
   const name =
     input.value.trim();
@@ -959,35 +1157,40 @@ function add(){
   if(!name) return;
 
 
-  const selected =
-    cat.value;
-
-  const category =
-    categories.includes(selected)
-      ? selected
-      : categories[0];
+  const categoryName =
+    category.value;
 
 
-  const items =
-    getItems();
-
-
-  items.push({
+  const newItem = {
 
     name,
 
-    category,
+    category:
+      categories.includes(categoryName)
+        ? categoryName
+        : categories[0],
 
     done:false
 
-  });
+  };
+
+
+  if(currentList === "master"){
+
+    masterItems.push(newItem);
+
+  }else{
+
+    todayItems.push(newItem);
+
+  }
 
 
   save();
 
-  render();
-
   input.value = "";
+
+  render();
 
   input.focus();
 
@@ -995,16 +1198,16 @@ function add(){
 
 
 document.getElementById("addBtn")
-  .onclick = add;
+  .onclick = addItem;
 
 
 input.addEventListener(
   "keydown",
-  e => {
+  event => {
 
-    if(e.key === "Enter"){
+    if(event.key === "Enter"){
 
-      add();
+      addItem();
 
     }
 
@@ -1012,21 +1215,30 @@ input.addEventListener(
 );
 
 
-/* =========================
+/* =========================================
    CLEAR CHECKED
-========================= */
+========================================= */
 
 document.getElementById(
   "clearChecked"
 ).onclick = () => {
 
-  const items = getItems();
+  if(currentList === "master"){
 
-  setItems(
-    items.filter(
-      x => !x.done
-    )
-  );
+    masterItems =
+      masterItems.filter(
+        item => !item.done
+      );
+
+  }else{
+
+    todayItems =
+      todayItems.filter(
+        item => !item.done
+      );
+
+  }
+
 
   save();
 
@@ -1035,49 +1247,84 @@ document.getElementById(
 };
 
 
-/* =========================
-   CLEAR ALL
-========================= */
+/* =========================================
+   RESET CURRENT LIST
+========================================= */
 
 document.getElementById(
   "clearAll"
 ).onclick = () => {
 
-  const items = getItems();
 
-  if(!items.length) return;
+  if(currentList === "master"){
 
-
-  const message =
-    currentList === "master"
-
-      ? "Clear your entire Master Grocery List?"
-
-      : "Clear today's grocery list?";
+    if(!masterItems.length)
+      return;
 
 
-  if(
-    confirm(message)
-  ){
+    if(
+      !confirm(
+        "Reset your Master Grocery List back to the original grocery list?"
+      )
+    ){
 
-    setItems([]);
+      return;
 
-    save();
+    }
 
-    render();
+
+    masterItems =
+      originalMaster.map(
+        ([category,name]) => ({
+
+          category,
+
+          name,
+
+          done:false
+
+        })
+      );
+
+
+  }else{
+
+    if(!todayItems.length)
+      return;
+
+
+    if(
+      !confirm(
+        "Reset Today's Grocery List? This will only clear today's list."
+      )
+    ){
+
+      return;
+
+    }
+
+
+    todayItems = [];
 
   }
+
+
+  save();
+
+  render();
 
 };
 
 
-/* =========================
+/* =========================================
    SERVICE WORKER
-========================= */
+========================================= */
 
-if("serviceWorker" in navigator){
+if(
+  "serviceWorker" in navigator
+){
 
-  addEventListener(
+  window.addEventListener(
     "load",
     () => {
 
@@ -1091,9 +1338,9 @@ if("serviceWorker" in navigator){
 }
 
 
-/* =========================
+/* =========================================
    START
-========================= */
+========================================= */
 
 render();
 
