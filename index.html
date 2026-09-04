@@ -9,142 +9,1095 @@
 <meta name="apple-mobile-web-app-title" content="Grocery List">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
-<title>Grocery Checklist — Today</title>
+<title>Grocery Checklist</title>
+
 <style>
 :root{
-  --matcha:#8aaa5b; --dark:#4f6733; --soft:#edf4df; --cream:#fbfcf5;
-  --bg:#f3f7e9; --text:#30392a; --muted:#7d876f; --line:#dbe5ca;
+  --matcha:#8aaa5b;
+  --dark:#4f6733;
+  --soft:#edf4df;
+  --cream:#fbfcf5;
+  --bg:#f3f7e9;
+  --text:#30392a;
+  --muted:#7d876f;
+  --line:#dbe5ca;
 }
-*{box-sizing:border-box}
-body{margin:0;background:linear-gradient(180deg,#edf4df,#f8faf2 45%,#fff);
-font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;color:var(--text);min-height:100vh}
-.app{max-width:760px;margin:auto;padding:max(22px,env(safe-area-inset-top)) 16px calc(30px + env(safe-area-inset-bottom))}
-header{text-align:center;padding:12px 5px 8px}
-.logo{font-size:42px} h1{margin:2px 0 4px;font-size:30px;letter-spacing:-.7px;color:var(--dark)}
-.subtitle{margin:0;color:var(--muted);font-size:14px}
-.add{display:flex;gap:8px;background:#fff;padding:9px;border:1px solid var(--line);border-radius:18px;box-shadow:0 7px 25px #526b3212}
-input[type=text]{flex:1;min-width:0;border:0;outline:0;background:var(--cream);border-radius:12px;padding:13px;font-size:16px;color:var(--text)}
-select{border:1px solid var(--line);background:var(--cream);border-radius:12px;padding:0 10px;color:var(--dark);font-size:14px}
-button{font:inherit;cursor:pointer;border:0}
-#addBtn{background:var(--matcha);color:white;border-radius:12px;padding:0 18px;font-weight:700}
-.toolbar{display:flex;justify-content:space-between;align-items:center;margin:15px 2px 10px;gap:8px}
-#count{font-size:13px;color:var(--muted)}
-.actions{display:flex;gap:6px}
-.small{background:#fff;border:1px solid var(--line);color:var(--dark);border-radius:10px;padding:7px 9px;font-size:12px;font-weight:600}
-.category{margin:16px 0 8px;color:var(--dark);font-weight:800;font-size:15px;display:flex;align-items:center;gap:7px}
-.item{display:flex;align-items:center;gap:11px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:11px 10px;margin-bottom:7px}
-.check{appearance:none;width:23px;height:23px;flex:0 0 23px;border:2px solid #b7c59e;border-radius:7px;background:white;position:relative}
-.check:checked{background:var(--matcha);border-color:var(--matcha)}
-.check:checked:after{content:"✓";position:absolute;color:#fff;font-weight:800;left:3px;top:-2px}
-.name{flex:1;overflow-wrap:anywhere;font-size:15px}
-.done .name{text-decoration:line-through;color:#a3aa99}
-.delete{width:32px;height:32px;border-radius:9px;background:#f5f8ed;color:#74864f;font-size:18px}
-.empty{text-align:center;padding:42px 15px;color:var(--muted);background:#ffffffb8;border:1px dashed var(--line);border-radius:16px}
-footer{text-align:center;color:#9aa58b;font-size:11px;margin-top:20px}
-@media(max-width:560px){.add{flex-wrap:wrap}.add input{width:100%;flex-basis:100%}.add select{height:43px;flex:1}.add #addBtn{height:43px}}
+
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  background:linear-gradient(180deg,#edf4df,#f8faf2 45%,#fff);
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;
+  color:var(--text);
+  min-height:100vh;
+}
+
+.app{
+  max-width:760px;
+  margin:auto;
+  padding:max(22px,env(safe-area-inset-top))
+          16px
+          calc(30px + env(safe-area-inset-bottom));
+}
+
+header{
+  text-align:center;
+  padding:12px 5px 8px;
+}
+
+.logo{
+  font-size:42px;
+}
+
+h1{
+  margin:2px 0 4px;
+  font-size:30px;
+  letter-spacing:-.7px;
+  color:var(--dark);
+}
+
+.subtitle{
+  margin:0;
+  color:var(--muted);
+  font-size:14px;
+}
+
+/* Tabs */
+
+.tabs{
+  display:flex;
+  gap:7px;
+  background:#ffffffb8;
+  border:1px solid var(--line);
+  padding:5px;
+  border-radius:15px;
+  margin:12px 0 15px;
+}
+
+.tab{
+  flex:1;
+  padding:11px 8px;
+  border-radius:11px;
+  background:transparent;
+  color:var(--muted);
+  font-weight:700;
+  font-size:14px;
+}
+
+.tab.active{
+  background:var(--matcha);
+  color:white;
+}
+
+/* Add area */
+
+.add{
+  display:flex;
+  gap:8px;
+  background:#fff;
+  padding:9px;
+  border:1px solid var(--line);
+  border-radius:18px;
+  box-shadow:0 7px 25px #526b3212;
+}
+
+input[type=text]{
+  flex:1;
+  min-width:0;
+  border:0;
+  outline:0;
+  background:var(--cream);
+  border-radius:12px;
+  padding:13px;
+  font-size:16px;
+  color:var(--text);
+}
+
+select{
+  border:1px solid var(--line);
+  background:var(--cream);
+  border-radius:12px;
+  padding:0 10px;
+  color:var(--dark);
+  font-size:14px;
+}
+
+button{
+  font:inherit;
+  cursor:pointer;
+  border:0;
+}
+
+#addBtn{
+  background:var(--matcha);
+  color:white;
+  border-radius:12px;
+  padding:0 18px;
+  font-weight:700;
+}
+
+/* Toolbar */
+
+.toolbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin:15px 2px 10px;
+  gap:8px;
+}
+
+#count{
+  font-size:13px;
+  color:var(--muted);
+}
+
+.actions{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+}
+
+.small{
+  background:#fff;
+  border:1px solid var(--line);
+  color:var(--dark);
+  border-radius:10px;
+  padding:7px 9px;
+  font-size:12px;
+  font-weight:600;
+}
+
+/* List */
+
+.category{
+  margin:16px 0 8px;
+  color:var(--dark);
+  font-weight:800;
+  font-size:15px;
+  display:flex;
+  align-items:center;
+  gap:7px;
+}
+
+.item{
+  display:flex;
+  align-items:center;
+  gap:11px;
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:11px 10px;
+  margin-bottom:7px;
+}
+
+.check{
+  appearance:none;
+  width:23px;
+  height:23px;
+  flex:0 0 23px;
+  border:2px solid #b7c59e;
+  border-radius:7px;
+  background:white;
+  position:relative;
+}
+
+.check:checked{
+  background:var(--matcha);
+  border-color:var(--matcha);
+}
+
+.check:checked:after{
+  content:"✓";
+  position:absolute;
+  color:#fff;
+  font-weight:800;
+  left:3px;
+  top:-2px;
+}
+
+.name{
+  flex:1;
+  overflow-wrap:anywhere;
+  font-size:15px;
+}
+
+.done .name{
+  text-decoration:line-through;
+  color:#a3aa99;
+}
+
+.delete{
+  width:32px;
+  height:32px;
+  border-radius:9px;
+  background:#f5f8ed;
+  color:#74864f;
+  font-size:18px;
+}
+
+.copy{
+  width:32px;
+  height:32px;
+  border-radius:9px;
+  background:#edf4df;
+  color:var(--dark);
+  font-size:16px;
+}
+
+.empty{
+  text-align:center;
+  padding:42px 15px;
+  color:var(--muted);
+  background:#ffffffb8;
+  border:1px dashed var(--line);
+  border-radius:16px;
+}
+
+.today-note{
+  text-align:center;
+  background:#edf4df;
+  border:1px solid var(--line);
+  color:var(--dark);
+  padding:10px;
+  border-radius:12px;
+  font-size:13px;
+  margin-bottom:12px;
+}
+
+footer{
+  text-align:center;
+  color:#9aa58b;
+  font-size:11px;
+  margin-top:20px;
+}
+
+@media(max-width:560px){
+
+  .add{
+    flex-wrap:wrap;
+  }
+
+  .add input{
+    width:100%;
+    flex-basis:100%;
+  }
+
+  .add select{
+    height:43px;
+    flex:1;
+  }
+
+  .add #addBtn{
+    height:43px;
+  }
+
+  .toolbar{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+
+  .actions{
+    width:100%;
+  }
+}
 </style>
 </head>
+
 <body>
+
 <main class="app">
-<header><div class="logo">🌿</div><h1>Grocery Checklist</h1><div class="subtitle" id="dateSubtitle"></div></header>
 
-<section class="add">
-<input id="input" type="text" placeholder="Add a grocery item for today..." autocomplete="off">
-<select id="category"></select>
-<button id="addBtn">+ Add</button>
-<button id="resetBtn" class="small" type="button">Load starter items</button>
-</section>
+<header>
+  <div class="logo">🌿</div>
+  <h1>Grocery Checklist</h1>
+  <div class="subtitle" id="dateSubtitle"></div>
+</header>
 
-<div class="toolbar">
-<span id="count"></span>
-<div class="actions"><button class="small" id="clearChecked">Clear checked</button><button class="small" id="clearAll">Clear all</button></div>
+<!-- LIST TABS -->
+
+<div class="tabs">
+
+  <button class="tab active" id="masterTab">
+    🛒 Master List
+  </button>
+
+  <button class="tab" id="todayTab">
+    🌿 Today
+  </button>
+
 </div>
 
+<!-- ADD ITEM -->
+
+<section class="add">
+
+  <input
+    id="input"
+    type="text"
+    placeholder="Add a grocery item..."
+    autocomplete="off"
+  >
+
+  <select id="category"></select>
+
+  <button id="addBtn">
+    + Add
+  </button>
+
+</section>
+
+<!-- TOOLBAR -->
+
+<div class="toolbar">
+
+  <span id="count"></span>
+
+  <div class="actions">
+
+    <button class="small" id="clearChecked">
+      Clear checked
+    </button>
+
+    <button class="small" id="clearAll">
+      Clear all
+    </button>
+
+  </div>
+
+</div>
+
+<!-- LIST -->
+
 <section id="list"></section>
-<footer>Saved automatically • Works offline • Your list stays on this device</footer>
+
+<footer>
+  Master list stays permanent • Today is saved separately by date • Works offline
+</footer>
+
 </main>
 
-<script>
-// Store lists per-day so you can have a different list for each date.
-function dateKeyFor(d){
-  const yyyy = d.getFullYear();
-  const mm = String(d.getMonth()+1).padStart(2,'0');
-  const dd = String(d.getDate()).padStart(2,'0');
-  return `${yyyy}-${mm}-${dd}`;
-}
-const today = new Date();
-const DATE_KEY = dateKeyFor(today);
-const KEY = `matcha-grocery-list-v1-${DATE_KEY}`;
 
-// show date in header
-document.addEventListener('DOMContentLoaded', () => {
-  const ds = document.getElementById('dateSubtitle');
-  ds.textContent = `For: ${DATE_KEY}`;
+<script>
+
+/* =========================
+   DATE
+========================= */
+
+function dateKeyFor(d){
+
+  const yyyy = d.getFullYear();
+
+  const mm = String(d.getMonth()+1).padStart(2,'0');
+
+  const dd = String(d.getDate()).padStart(2,'0');
+
+  return `${yyyy}-${mm}-${dd}`;
+
+}
+
+const today = new Date();
+
+const DATE_KEY = dateKeyFor(today);
+
+
+/* =========================
+   STORAGE KEYS
+========================= */
+
+const MASTER_KEY = "matcha-grocery-master-v1";
+
+const TODAY_KEY =
+  `matcha-grocery-today-v1-${DATE_KEY}`;
+
+
+/* =========================
+   CATEGORIES
+========================= */
+
+const categories = [
+
+  "Frozen & Refrigerated",
+
+  "Pasta & Grains",
+
+  "Produce",
+
+  "Dairy (additional)",
+
+  "Personal Care (additional)",
+
+  "Bakery",
+
+  "Proteins",
+
+  "Cats",
+
+  "Condiments & Sauces",
+
+  "Beverages",
+
+  "Health & Wellness",
+
+  "Cleaning & Laundry"
+
+];
+
+
+/* =========================
+   STARTER MASTER LIST
+========================= */
+
+const starter = [
+
+  ["Produce","Bananas"],
+
+  ["Produce","Carrots"],
+
+  ["Dairy (additional)","Milk"],
+
+  ["Bakery","Bread loaf"],
+
+  ["Proteins","Ground beef"]
+
+];
+
+
+/* =========================
+   DOM
+========================= */
+
+const input =
+  document.getElementById("input");
+
+const cat =
+  document.getElementById("category");
+
+const list =
+  document.getElementById("list");
+
+const count =
+  document.getElementById("count");
+
+const masterTab =
+  document.getElementById("masterTab");
+
+const todayTab =
+  document.getElementById("todayTab");
+
+const dateSubtitle =
+  document.getElementById("dateSubtitle");
+
+
+/* =========================
+   CATEGORY DROPDOWN
+========================= */
+
+categories.forEach(c => {
+
+  cat.add(new Option(c,c));
+
 });
 
-const categories=[
-"Frozen & Refrigerated","Pasta & Grains","Produce","Dairy (additional)",
-"Personal Care (additional)","Bakery","Proteins","Cats","Condiments & Sauces",
-"Beverages","Health & Wellness","Cleaning & Laundry"
-];
-const starter=[
-["Produce","Bananas"],["Produce","Carrots"],["Dairy (additional)","Milk"],["Bakery","Bread loaf"],["Proteins","Ground beef"]
-];
 
-const input=document.getElementById("input"), cat=document.getElementById("category"), list=document.getElementById("list"), count=document.getElementById("count");
-categories.forEach(c=>cat.add(new Option(c,c)));
+/* =========================
+   LOAD MASTER LIST
+========================= */
 
-let items;
-try{ items = JSON.parse(localStorage.getItem(KEY)||"null"); } catch(e){ items = null; }
-if(!Array.isArray(items)){
-  // start with an empty list for each day (user can load starter items)
-  items = [];
-  save();
+let masterItems;
+
+try{
+
+  masterItems =
+    JSON.parse(
+      localStorage.getItem(MASTER_KEY) || "null"
+    );
+
+}catch(e){
+
+  masterItems = null;
+
 }
 
-function save(){localStorage.setItem(KEY,JSON.stringify(items));}
+if(!Array.isArray(masterItems)){
+
+  masterItems = [];
+
+}
+
+
+/* =========================
+   LOAD TODAY LIST
+========================= */
+
+let todayItems;
+
+try{
+
+  todayItems =
+    JSON.parse(
+      localStorage.getItem(TODAY_KEY) || "null"
+    );
+
+}catch(e){
+
+  todayItems = null;
+
+}
+
+if(!Array.isArray(todayItems)){
+
+  todayItems = [];
+
+}
+
+
+/* =========================
+   CURRENT LIST
+========================= */
+
+let currentList = "master";
+
+
+/* =========================
+   SAVE
+========================= */
+
+function save(){
+
+  localStorage.setItem(
+    MASTER_KEY,
+    JSON.stringify(masterItems)
+  );
+
+  localStorage.setItem(
+    TODAY_KEY,
+    JSON.stringify(todayItems)
+  );
+
+}
+
+
+/* =========================
+   GET CURRENT ITEMS
+========================= */
+
+function getItems(){
+
+  return currentList === "master"
+    ? masterItems
+    : todayItems;
+
+}
+
+
+/* =========================
+   SET CURRENT ITEMS
+========================= */
+
+function setItems(newItems){
+
+  if(currentList === "master"){
+
+    masterItems = newItems;
+
+  }else{
+
+    todayItems = newItems;
+
+  }
+
+}
+
+
+/* =========================
+   DATE HEADER
+========================= */
+
+dateSubtitle.textContent =
+  `Today: ${DATE_KEY}`;
+
+
+/* =========================
+   SWITCH LIST
+========================= */
+
+function switchList(type){
+
+  currentList = type;
+
+  if(type === "master"){
+
+    masterTab.classList.add("active");
+
+    todayTab.classList.remove("active");
+
+    input.placeholder =
+      "Add a grocery item to your master list...";
+
+  }else{
+
+    todayTab.classList.add("active");
+
+    masterTab.classList.remove("active");
+
+    input.placeholder =
+      "Add a grocery item for today...";
+
+  }
+
+  render();
+
+}
+
+
+masterTab.onclick = () =>
+  switchList("master");
+
+
+todayTab.onclick = () =>
+  switchList("today");
+
+
+/* =========================
+   RENDER
+========================= */
+
 function render(){
- list.innerHTML = "";
- if(!items.length){list.innerHTML='<div class="empty"><b>Your grocery list for today is empty 🌿</b><br>Add something above to get started.</div>'}
- categories.forEach(category=>{
-   const group = items.filter(x=>x.category===category);
-   if(!group.length) return;
-   const title = document.createElement('div'); title.className='category'; title.textContent=category; list.appendChild(title);
-   group.forEach(item=>{
-     const i = items.indexOf(item), row = document.createElement('div'); row.className = 'item' + (item.done ? ' done' : '');
-     const check = document.createElement('input'); check.type='checkbox'; check.className='check'; check.checked=item.done;
-     check.addEventListener('change', ()=>{ items[i].done = check.checked; save(); render(); });
-     const name = document.createElement('span'); name.className='name'; name.textContent = item.name;
-     // toggle on name click too
-     name.addEventListener('click', ()=>{ items[i].done = !items[i].done; save(); render(); });
-     const del = document.createElement('button'); del.className='delete'; del.textContent='×'; del.setAttribute('aria-label','Delete '+item.name);
-     del.onclick = ()=>{ items.splice(i,1); save(); render(); };
-     row.append(check, name, del); list.appendChild(row);
-   });
- });
- const remaining = items.filter(x=>!x.done).length;
- count.textContent = `${remaining} remaining • ${items.length} total`;
+
+  list.innerHTML = "";
+
+  const items = getItems();
+
+  if(currentList === "today"){
+
+    const note =
+      document.createElement("div");
+
+    note.className = "today-note";
+
+    note.innerHTML =
+      `🌿 <b>Today's Grocery List</b><br>
+       This list is separate from your Master List.`;
+
+    list.appendChild(note);
+
+  }
+
+
+  if(!items.length){
+
+    const empty =
+      document.createElement("div");
+
+    empty.className = "empty";
+
+    if(currentList === "master"){
+
+      empty.innerHTML =
+        "<b>Your Master Grocery List is empty 🌿</b><br>" +
+        "Add your regular grocery items here.";
+
+    }else{
+
+      empty.innerHTML =
+        "<b>Nothing on today's list 🌿</b><br>" +
+        "Add something above or copy an item from your Master List.";
+
+    }
+
+    list.appendChild(empty);
+
+  }
+
+
+  categories.forEach(category => {
+
+    const group =
+      items.filter(
+        x => x.category === category
+      );
+
+    if(!group.length) return;
+
+
+    const title =
+      document.createElement("div");
+
+    title.className = "category";
+
+    title.textContent = category;
+
+    list.appendChild(title);
+
+
+    group.forEach(item => {
+
+      const i =
+        items.indexOf(item);
+
+      const row =
+        document.createElement("div");
+
+      row.className =
+        "item" +
+        (item.done ? " done" : "");
+
+
+      /* CHECKBOX */
+
+      const check =
+        document.createElement("input");
+
+      check.type = "checkbox";
+
+      check.className = "check";
+
+      check.checked = item.done;
+
+      check.addEventListener(
+        "change",
+        () => {
+
+          items[i].done =
+            check.checked;
+
+          save();
+
+          render();
+
+        }
+      );
+
+
+      /* NAME */
+
+      const name =
+        document.createElement("span");
+
+      name.className = "name";
+
+      name.textContent =
+        item.name;
+
+      name.addEventListener(
+        "click",
+        () => {
+
+          items[i].done =
+            !items[i].done;
+
+          save();
+
+          render();
+
+        }
+      );
+
+
+      /* TODAY COPY BUTTON */
+
+      if(currentList === "master"){
+
+        const copy =
+          document.createElement("button");
+
+        copy.className = "copy";
+
+        copy.textContent = "＋";
+
+        copy.title =
+          "Add to Today's List";
+
+        copy.setAttribute(
+          "aria-label",
+          "Add " + item.name + " to Today's List"
+        );
+
+        copy.onclick = () => {
+
+          const alreadyThere =
+            todayItems.some(
+              x =>
+                x.name.toLowerCase() ===
+                item.name.toLowerCase() &&
+                x.category === item.category
+            );
+
+          if(alreadyThere){
+
+            alert(
+              `"${item.name}" is already on today's list.`
+            );
+
+            return;
+
+          }
+
+          todayItems.push({
+
+            name: item.name,
+
+            category: item.category,
+
+            done: false
+
+          });
+
+          save();
+
+          alert(
+            `"${item.name}" was added to today's list 🌿`
+          );
+
+        };
+
+        row.appendChild(check);
+
+        row.appendChild(name);
+
+        row.appendChild(copy);
+
+      }
+
+
+      /* TODAY DELETE */
+
+      if(currentList === "today"){
+
+        const del =
+          document.createElement("button");
+
+        del.className = "delete";
+
+        del.textContent = "×";
+
+        del.setAttribute(
+          "aria-label",
+          "Delete " + item.name
+        );
+
+        del.onclick = () => {
+
+          todayItems.splice(i,1);
+
+          save();
+
+          render();
+
+        };
+
+        row.appendChild(check);
+
+        row.appendChild(name);
+
+        row.appendChild(del);
+
+      }
+
+
+      /* MASTER DELETE */
+
+      if(currentList === "master"){
+
+        const del =
+          document.createElement("button");
+
+        del.className = "delete";
+
+        del.textContent = "×";
+
+        del.setAttribute(
+          "aria-label",
+          "Delete " + item.name
+        );
+
+        del.onclick = () => {
+
+          masterItems.splice(i,1);
+
+          save();
+
+          render();
+
+        };
+
+        row.appendChild(del);
+
+      }
+
+
+      list.appendChild(row);
+
+    });
+
+  });
+
+
+  const remaining =
+    items.filter(
+      x => !x.done
+    ).length;
+
+  count.textContent =
+    `${remaining} remaining • ${items.length} total`;
+
 }
+
+
+/* =========================
+   ADD ITEM
+========================= */
+
 function add(){
- const name = input.value.trim(); if(!name) return;
- const selected = cat.value; const category = categories.includes(selected) ? selected : categories[0];
- items.push({name,category,done:false}); save(); render(); input.value=''; input.focus();
+
+  const name =
+    input.value.trim();
+
+  if(!name) return;
+
+
+  const selected =
+    cat.value;
+
+  const category =
+    categories.includes(selected)
+      ? selected
+      : categories[0];
+
+
+  const items =
+    getItems();
+
+
+  items.push({
+
+    name,
+
+    category,
+
+    done:false
+
+  });
+
+
+  save();
+
+  render();
+
+  input.value = "";
+
+  input.focus();
+
 }
 
-document.getElementById("addBtn").onclick=add;
-input.addEventListener('keydown', e=>{ if(e.key === 'Enter') add(); });
-document.getElementById("clearChecked").onclick = ()=>{ items = items.filter(x=>!x.done); save(); render(); };
-document.getElementById("clearAll").onclick = ()=>{ if(items.length && confirm('Clear your entire grocery list for today?')){ items=[]; save(); render(); } };
 
-// Load starter items for today (replaces current list)
-document.getElementById("resetBtn").onclick = () => {
-  if(!confirm('Load starter items for today? This will replace your current list for today.')) return;
-  items = starter.map(([category,name]) => ({category,name,done:false}));
-  save(); render();
+document.getElementById("addBtn")
+  .onclick = add;
+
+
+input.addEventListener(
+  "keydown",
+  e => {
+
+    if(e.key === "Enter"){
+
+      add();
+
+    }
+
+  }
+);
+
+
+/* =========================
+   CLEAR CHECKED
+========================= */
+
+document.getElementById(
+  "clearChecked"
+).onclick = () => {
+
+  const items = getItems();
+
+  setItems(
+    items.filter(
+      x => !x.done
+    )
+  );
+
+  save();
+
+  render();
+
 };
 
-if("serviceWorker" in navigator) addEventListener("load", ()=> navigator.serviceWorker.register("service-worker.js"));
+
+/* =========================
+   CLEAR ALL
+========================= */
+
+document.getElementById(
+  "clearAll"
+).onclick = () => {
+
+  const items = getItems();
+
+  if(!items.length) return;
+
+
+  const message =
+    currentList === "master"
+
+      ? "Clear your entire Master Grocery List?"
+
+      : "Clear today's grocery list?";
+
+
+  if(
+    confirm(message)
+  ){
+
+    setItems([]);
+
+    save();
+
+    render();
+
+  }
+
+};
+
+
+/* =========================
+   SERVICE WORKER
+========================= */
+
+if("serviceWorker" in navigator){
+
+  addEventListener(
+    "load",
+    () => {
+
+      navigator.serviceWorker.register(
+        "service-worker.js"
+      );
+
+    }
+  );
+
+}
+
+
+/* =========================
+   START
+========================= */
+
 render();
+
 </script>
+
 </body>
 </html>
